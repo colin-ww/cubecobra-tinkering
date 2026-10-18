@@ -2,6 +2,7 @@ name: CubeCobra export -> Parquet
 
 on:
   workflow_dispatch: {}
+  workflow_call: {} # reused by cubecobra-sync-r.yml (parallel run with the R port)
   # Uncomment when you're happy with the manual runs:
   # schedule:
   #   - cron: "0 6 1 */3 *"   # 06:00 UTC, 1st of every 3rd month

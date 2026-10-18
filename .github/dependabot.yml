@@ -5,10 +5,8 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/" # Location of package manifests
-    schedule:
-      interval: "weekly"
+  # No "pip" entry: the repo is moving to R (Dependabot has no R ecosystem), and with no
+  # requirements file the pip job failed every week with "No files found in /".
   - package-ecosystem: "github-actions" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
