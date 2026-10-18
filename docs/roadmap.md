@@ -49,11 +49,14 @@ flowchart TB
 (`mtgo_id`, `tcgplayer_id`, `firstPrintYear`) and uses `string`, not `large_string`. Say so if you want
 identical types instead; it is a few casts.
 
-**What the port showed** (full export, my sandbox, which is ~2x slower than a GitHub runner):
-- Same data: 7 of 7 files identical, checked by `compare_parquet.R` (and the checker catches six
-  kinds of deliberate corruption).
-- R took 147 s for all seven files, Python 76 s. R is slower on the nested files (`carddict` 71 s,
-  `metadatadict` 40 s) and faster on `cubes` (30-36 s). Peak RAM on `cubes.json`: 2.7 GB vs 4.7 GB.
+**What the port showed** (full export):
+- Same data: 7 of 7 files identical, checked by `compare_parquet.R` locally **and in the first green
+  parallel run on GitHub** (and the checker catches six kinds of deliberate corruption).
+- Speed of the conversion step: on a GitHub runner R takes 66 s, Python 22 s (R: `cubes` 9.5 s,
+  `carddict` 34 s, `metadatadict` 20 s). In my slower sandbox: 147 s vs 76 s. R is slower on the
+  nested files; for a quarterly job that doesn't matter. Peak RAM on `cubes.json` (sandbox): 2.7 GB
+  (R) vs 4.7 GB (pandas).
+- Output size is the same: the R artifact is 211,062,566 bytes, the Python one 211,225,989.
 - The price of R is ~40 lines (`as_col()`) that pandas + pyarrow do implicitly: arrow in R refuses
   named lists, empty `list()` cells and mixed cells, so every column has to be typed first.
 - `jsonlite` is unusable here (190 s and 10.8 GB on `cubes.json`); RcppSimdJson does it in 7.5 s and 2.6 GB.

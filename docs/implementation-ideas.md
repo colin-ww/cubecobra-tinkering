@@ -138,7 +138,7 @@ haven't looked at it; possible overlap on card identity), and `cubecobra-card-ra
   the old name `int64_r_type` and nothing complained, nothing happened.
 - **Closures per cell are slow.** The first `as_col()` used a purrr closure per value and was still
   running after 10 minutes. Whole-vector calls (`lengths()`, `list_c()`, `lapply()` over primitives)
-  brought all seven files to 147 s.
+  brought all seven files to 147 s (66 s on a GitHub runner).
 - `if (sys.nframe() == 0) main()` lets a script be `source()`d by tests without running it.
 - `jsonlite::fromJSON()` is fine for small files and unusable for the 450 MB one.
 
