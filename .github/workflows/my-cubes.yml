@@ -1,0 +1,43 @@
+name: My cubes -> Parquet snapshot
+
+on:
+  workflow_dispatch: {}
+  # Doubles as an integration check: runs when the fetcher, its config or its deps change.
+  pull_request:
+    paths:
+      - scripts/fetch_cubes.py
+      - config/cubes.toml
+      - requirements.txt
+      - .github/workflows/my-cubes.yml
+  # Uncomment when the manual runs look right. GitHub cron is UTC only, so these are
+  # Mon + Wed 16:00 and Sat 08:00 Mountain *daylight* time (UTC-6, until 1 Nov).
+  # In winter (UTC-7) use 23:00 and 15:00 instead.
+  # schedule:
+  #   - cron: "0 22 * * 1,3"
+  #   - cron: "0 14 * * 6"
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Fetch cubes -> Parquet
+        shell: bash  # = bash -eo pipefail, so a failing script fails the step even through `tee`
+        run: |
+          python scripts/fetch_cubes.py | tee summary.txt
+          { echo '```'; cat summary.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: my-cubes-parquet
+          path: processed/
+          if-no-files-found: error
+          retention-days: 30

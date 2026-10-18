@@ -1,0 +1,15 @@
+# Cubes to snapshot (scripts/fetch_cubes.py).
+#   id       CubeCobra cube id or short id: the last part of cubecobra.com/cube/list/<id>
+#   name     optional label for reports (defaults to the cube's own name)
+#   uniques  optional, marks the "uniques" cube from the README ideas
+# Public and unlisted cubes work; private cubes need a login the API doesn't offer.
+#
+# Two public cubes as examples -- replace them with yours.
+
+[[cube]]
+id = "modovintage"
+name = "MTGO Vintage Cube (example)"
+
+[[cube]]
+id = "5d617ac6c2a85f3b75fe95a4"
+name = "The Pauper Cube (example)"
