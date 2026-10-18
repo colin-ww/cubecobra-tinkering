@@ -1,0 +1,22 @@
+# data: downloaded or generated, never commit
+raw/
+processed/
+*.parquet
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+
+# leftovers from when this repo was an R project
+.Rhistory
+.RData
+.Rproj.user/
