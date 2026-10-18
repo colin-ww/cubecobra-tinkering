@@ -6,7 +6,7 @@ BASE="https://cubecobra-public.s3.amazonaws.com"
 mkdir -p raw
 
 # <remote path> <local name>; 4 at a time. A failing curl fails the whole script (xargs -> exit 123).
-xargs -P 4 -L 1 sh -c 'curl -fsSL -o "raw/$1" "$0/$2"' "$BASE" <<'EOF'
+xargs -P 4 -L 1 sh -c 'curl -fsSL -o "raw/$2" "$0/$1"' "$BASE" <<'EOF'
 export/cubes.json              cubes.json
 export/indexToOracleMap.json   export_indexToOracle.json
 cards/indexToOracle.json       cards_indexToOracle.json
