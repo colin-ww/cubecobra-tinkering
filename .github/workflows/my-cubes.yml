@@ -10,8 +10,8 @@ on:
       - requirements.txt
       - .github/workflows/my-cubes.yml
   # Uncomment when the manual runs look right. GitHub cron is UTC only, so these are
-  # Mon + Wed 16:00 and Sat 08:00 Mountain *daylight* time (UTC-6, until 1 Nov).
-  # In winter (UTC-7) use 23:00 and 15:00 instead.
+  # Mon + Wed 16:00 and Sat 08:00 at UTC-6. tzdata 2026c has Alberta staying on UTC-6 after
+  # 1 Nov 2026 (no more clock changes); if that turns out wrong, shift both lines by +1 h.
   # schedule:
   #   - cron: "0 22 * * 1,3"
   #   - cron: "0 14 * * 6"
