@@ -18,6 +18,11 @@ on:
   # schedule:
   #   - cron: "0 6 1 */3 *"   # 06:00 UTC, 1st of every 3rd month
 
+# Least privilege for every job (also the reused Python one): they only read the repo,
+# artifacts use their own token.
+permissions:
+  contents: read
+
 jobs:
   py:
     uses: ./.github/workflows/cubecobra-sync.yml # artifact: cubecobra-parquet
