@@ -1,11 +1,12 @@
 """
 Convert CubeCobra's public JSON export to Parquet.
 
-Two JSON shapes show up in this dataset:
+Three JSON shapes show up in this dataset:
   - array-of-objects   (cubes.json)                -> straight to DataFrame
   - object keyed by id (carddict, metadatadict,
     indexToOracleMap, oracleToId, oracleTagDict...) -> needs reshaping,
     since a plain DataFrame() call on a dict treats keys as columns.
+  - array-of-scalars   (oracleTagNames)            -> keyed by position
 """
 
 import json
@@ -18,13 +19,27 @@ OUT = "processed"
 os.makedirs(OUT, exist_ok=True)
 
 
+def _oid_to_hex(obj):
+    """json `object_hook`: turn a leaked Mongo ObjectID back into its hex string.
+
+    A few legacy ids are exported as
+      {"_bsontype": "ObjectID", "id": {"type": "Buffer", "data": [<12 bytes>]}, ...}
+    instead of the usual 24-char hex string (e.g. one entry of one cube's
+    `following`). Left alone, that dict inside a list of strings makes
+    pyarrow fail with "Expected bytes, got a 'dict' object".
+    """
+    if obj.get("_bsontype") == "ObjectID":
+        return bytes(obj["id"]["data"]).hex()
+    return obj
+
+
 def load_json(name):
     with open(os.path.join(RAW, name)) as f:
-        return json.load(f)
+        return json.load(f, object_hook=_oid_to_hex)
 
 
 def map_to_df(data, key_name="key"):
-    """Turn a {key: value} JSON object into a tidy DataFrame.
+    """Turn a {key: value} JSON object (or array of scalars) into a tidy DataFrame.
 
     Handles three shapes of `value`:
       - dict  (e.g. carddict: {oracle_id: {name: ..., cmc: ...}})
@@ -33,6 +48,9 @@ def map_to_df(data, key_name="key"):
     """
     if not data:
         return pd.DataFrame({key_name: []})
+
+    if isinstance(data, list):  # e.g. oracleTagNames: ["tag-a", "tag-b"] -> {0: "tag-a", 1: "tag-b"}
+        data = dict(enumerate(data))
 
     sample = next(iter(data.values()))
 
