@@ -54,7 +54,7 @@ jobs:
           echo "---- processed (parquet) file sizes ----"
           ls -lh processed/
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: cubecobra-parquet
           path: processed/
